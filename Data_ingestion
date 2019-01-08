@@ -1,6 +1,9 @@
-Step-by-step approach for daily data ingestion from SQL to HIVE:
+Step-by-step approach for daily data ingestion from SQL to HIVE: 
 
-1. Create respective table named directories in hdfs. In this project, I have followed retail_db dataset with tables named orders, order_items, products, categories, customers, departments
+This approach shows how data can be ingested into hadoop on daily basis in an automated manner using sqoop. 
+Also, it enables hive access to the hdfs data with dynamic partition.
+
+1. Create respective table named directories in hdfs. In this project, I have followed retail_db dataset with tables named orders, order_items, products, categories, customers, departments.
 
 $ hadoop fs -mkdir /user/tbhangale/sqoop_import/retail_db/orders
 $ hadoop fs -mkdir /user/tbhangale/sqoop_import/retail_db/order_items
@@ -15,18 +18,18 @@ This directory will hold the data for a respective partition of hive table(to be
 For Transactional tables:
 -------------------------
 $ sqoop import \
---connect jdbc:mysql://ms.itversity.com:3306/retail_db \
---username retail_user \
---password itversity \
+--connect jdbc:mysql://ms.******.com:3306/retail_db \
+--username ****** \
+--password ****** \
 --fields-terminated-by ',' \
 --target-dir /user/tbhangale/sqoop_import/retail_db/orders/order_date=2013-07-25 \
 -e "select order_id, order_customer_id, order_status, order_date from orders where DATE(order_date)='2013-07-25' AND \$CONDITIONS" \
 --split-by order_id;
 
 $ sqoop import \
---connect jdbc:mysql://ms.itversity.com:3306/retail_db \	
---username retail_user \
---password itversity \
+--connect jdbc:mysql://ms.******.com:3306/retail_db \	
+--username ****** \
+--password ****** \
 --fields-terminated-by ',' \
 --target-dir /user/tbhangale/sqoop_import/retail_db/order_items/load_date=2013-07-25 \
 -e "select oi.order_item_id,oi.order_item_order_id,oi.order_item_product_id,oi.order_item_quantity,oi.order_item_subtotal,
@@ -36,9 +39,9 @@ oi.order_item_product_price, o.order_date as load_date from order_items oi inner
 For Dimensional tables:
 -----------------------
 $ sqoop import \
---connect jdbc:mysql://ms.itversity.com:3306/retail_db \
---username retail_user \
---password itversity \
+--connect jdbc:mysql://ms.******.com:3306/retail_db \
+--username ****** \
+--password ****** \
 --fields-terminated-by ',' \
 --target-dir /user/tbhangale/sqoop_import/retail_db/customers/load_date=2013-07-25 \
 -e "select customer_id, customer_fname,customer_lname,customer_email,customer_password,customer_street,customer_city,customer_state,
@@ -46,27 +49,27 @@ customer_zipcode, '2013-07-25' as load_date from customers where \$CONDITIONS" \
 --split-by customer_id;
 
 $ sqoop import \
---connect jdbc:mysql://ms.itversity.com:3306/retail_db \
---username retail_user \
---password itversity \
+--connect jdbc:mysql://ms.******.com:3306/retail_db \
+--username ****** \
+--password ****** \
 --fields-terminated-by ',' \
 --target-dir /user/tbhangale/sqoop_import/retail_db/categories/load_date=2013-07-25 \
 -e "select category_id,category_department_id,category_name,'2013-07-25' as load_date from categories where \$CONDITIONS" \
 --split-by category_id;
 
 $ sqoop import \
---connect jdbc:mysql://ms.itversity.com:3306/retail_db \
---username retail_user \
---password itversity \
+--connect jdbc:mysql://ms.******.com:3306/retail_db \
+--username ****** \
+--password ****** \
 --fields-terminated-by ',' \
 --target-dir /user/tbhangale/sqoop_import/retail_db/departments/load_date=2013-07-25 \
 -e "select department_id,department_name,'2013-07-25' as load_date from departments where \$CONDITIONS" \
 --split-by department_id;
 
 $ sqoop import \
---connect jdbc:mysql://ms.itversity.com:3306/retail_db \
---username retail_user \
---password itversity \
+--connect jdbc:mysql://ms.******.com:3306/retail_db \
+--username ****** \
+--password ****** \
 --fields-terminated-by ',' \
 --target-dir /user/tbhangale/sqoop_import/retail_db/products/load_date=2013-07-25 \
 -e "select product_id,product_category_id,product_name,product_description,product_price,product_image,'2013-07-25' as load_date from products where \$CONDITIONS" \
@@ -75,7 +78,7 @@ $ sqoop import \
 3. Check if the directories along with partitioned folders are created in HDFS or not:
 $ hadoop fs -ls /user/tbhangale/sqoop_import/retail_db/*/*/
 
-4. Create hive external tables partitioned by date
+4. Create hive external tables dynamically partitioned by date
 hive>
 CREATE EXTERNAL TABLE IF NOT EXISTS 
 tbhangale.orders(order_id INT, order_customer_id INT,order_status STRING)
@@ -125,7 +128,7 @@ FIELDS TERMINATED BY ','
 STORED AS TEXTFILE 
 LOCATION '/user/tbhangale/sqoop_import/retail_db/products';
 
-5. Update hive metastore with above imported hdfs data 
+5. Update hive metastore with newly created partitions in hdfs
 hive>
 MSCK REPAIR TABLE tbhangale.orders;
 MSCK REPAIR TABLE tbhangale.order_items;
@@ -134,4 +137,4 @@ MSCK REPAIR TABLE tbhangale.categories;
 MSCK REPAIR TABLE tbhangale.departments;
 MSCK REPAIR TABLE tbhangale.products;
 
-Note: Step-2 and setp-5 can be automated in a script to be run daily, so it will update hive tables and hdfs directories with yesterday's data from SQL tables. I have created orders.sh for the same for orders table. 
+Note: Step-2 and step-5 can be automated in a script to be run daily, so it will update hive tables and hdfs directories with yesterday's data from SQL tables. I have created orders.sh for the same for orders table. 
