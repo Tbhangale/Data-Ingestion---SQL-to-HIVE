@@ -12,4 +12,5 @@ sqoop import \
 -e "select * from orders where DATE(order_date)='${D}' AND \$CONDITIONS" \
 --split-by order_id
 
-hive -S -e 'use 'tbhangale'; select * from orders limit 5'
+//to hive prompt
+hive -S -e 'use 'tbhangale'; MSCK REPAIR TABLE tbhangale.orders;'
