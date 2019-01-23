@@ -15,18 +15,18 @@ This directory will hold the data for a respective partition of hive table(to be
 For Transactional tables:
 -------------------------
 $ sqoop import \
---connect jdbc:mysql://ms.itversity.com:3306/retail_db \
---username retail_user \
---password itversity \
+--connect jdbc:mysql://******/retail_db \
+--username ****** \
+--password ****** \
 --fields-terminated-by ',' \
 --target-dir /user/tbhangale/sqoop_import/retail_db/orders/order_date=2013-07-25 \
 -e "select order_id, order_customer_id, order_status, order_date from orders where DATE(order_date)='2013-07-25' AND \$CONDITIONS" \
 --split-by order_id;
 
 $ sqoop import \
---connect jdbc:mysql://ms.itversity.com:3306/retail_db \	
---username retail_user \
---password itversity \
+--connect jdbc:mysql://******/retail_db \	
+--username ****** \
+--password ****** \
 --fields-terminated-by ',' \
 --target-dir /user/tbhangale/sqoop_import/retail_db/order_items/load_date=2013-07-25 \
 -e "select oi.order_item_id,oi.order_item_order_id,oi.order_item_product_id,oi.order_item_quantity,oi.order_item_subtotal,
@@ -36,9 +36,9 @@ oi.order_item_product_price, o.order_date as load_date from order_items oi inner
 For Dimensional tables:
 -----------------------
 $ sqoop import \
---connect jdbc:mysql://ms.itversity.com:3306/retail_db \
---username retail_user \
---password itversity \
+--connect jdbc:mysql://******/retail_db \
+--username ****** \
+--password ****** \
 --fields-terminated-by ',' \
 --target-dir /user/tbhangale/sqoop_import/retail_db/customers/load_date=2013-07-25 \
 -e "select customer_id, customer_fname,customer_lname,customer_email,customer_password,customer_street,customer_city,customer_state,
@@ -46,27 +46,27 @@ customer_zipcode, '2013-07-25' as load_date from customers where \$CONDITIONS" \
 --split-by customer_id;
 
 $ sqoop import \
---connect jdbc:mysql://ms.itversity.com:3306/retail_db \
---username retail_user \
---password itversity \
+--connect jdbc:mysql://******/retail_db \
+--username ****** \
+--password ****** \
 --fields-terminated-by ',' \
 --target-dir /user/tbhangale/sqoop_import/retail_db/categories/load_date=2013-07-25 \
 -e "select category_id,category_department_id,category_name,'2013-07-25' as load_date from categories where \$CONDITIONS" \
 --split-by category_id;
 
 $ sqoop import \
---connect jdbc:mysql://ms.itversity.com:3306/retail_db \
---username retail_user \
---password itversity \
+--connect jdbc:mysql://******/retail_db \
+--username ****** \
+--password ****** \
 --fields-terminated-by ',' \
 --target-dir /user/tbhangale/sqoop_import/retail_db/departments/load_date=2013-07-25 \
 -e "select department_id,department_name,'2013-07-25' as load_date from departments where \$CONDITIONS" \
 --split-by department_id;
 
 $ sqoop import \
---connect jdbc:mysql://ms.itversity.com:3306/retail_db \
---username retail_user \
---password itversity \
+--connect jdbc:mysql://******/retail_db \
+--username ****** \
+--password ****** \
 --fields-terminated-by ',' \
 --target-dir /user/tbhangale/sqoop_import/retail_db/products/load_date=2013-07-25 \
 -e "select product_id,product_category_id,product_name,product_description,product_price,product_image,'2013-07-25' as load_date from products where \$CONDITIONS" \
