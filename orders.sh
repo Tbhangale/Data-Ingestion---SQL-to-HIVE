@@ -13,3 +13,4 @@ sqoop import \
 --split-by order_id
 
 hive -S -e 'use 'tbhangale'; select * from orders limit 5'
+MSCK REPAIR TABLE tbhangale.orders;
