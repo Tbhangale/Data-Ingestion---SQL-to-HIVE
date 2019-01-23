@@ -12,5 +12,8 @@ sqoop import \
 -e "select * from orders where DATE(order_date)='${D}' AND \$CONDITIONS" \
 --split-by order_id
 
-hive -S -e 'use 'tbhangale'; select * from orders limit 5'
-MSCK REPAIR TABLE tbhangale.orders;
+hive -S -e 'use 'tbhangale'; MSCK REPAIR TABLE tbhangale.orders; select * from orders limit 5;'
+
+OR
+hive -S -e 'use 'tbhangale'; ALTER TABLE orders ADD PARTITION (order_date='${D}') location '/user/tbhangale/sqoop_import/retail_db/orders/${D}';'
+
